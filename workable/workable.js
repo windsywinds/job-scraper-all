@@ -7,11 +7,12 @@ async function getWorkableData(url) {
   url = url.replace(/\/+$/, '');
   const parts = url.split('/');
   const companyName = parts[parts.length - 1];
-  console.log(`Using company name: ${companyName}`)
+  console.log(`getWorkableData using company name: ${companyName}`)
 
   //get data using api
   const jobData = await fetchWorkableFromAPI(companyName);
-  console.log(`Data being returned on workable.js to index.js: ${jobData.data}}`)
+  console.log(`Data being returned on workable.js to index.js...`)
+  console.log(`Data being returned on workable.js to index.js: ${jobData}`)
 
   return { companyName, jobData };
 }
