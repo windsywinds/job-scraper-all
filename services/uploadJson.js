@@ -21,6 +21,7 @@ async function createStorageBucketIfMissing(storage, bucketName) {
   async function uploadData(bucket, taskIndex, jobData) {
     const applyLink = 'https://apply.workable.com/';
     const companyName = jobData.companyName
+    console.log(`Uploading json file for jobs from https://apply.workable.com/${companyName} `)
     // Create filename using the current time, company name and task index
     const date = new Date();
     date.setMinutes(date.getMinutes() - date.getTimezoneOffset());
