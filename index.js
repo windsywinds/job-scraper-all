@@ -30,35 +30,43 @@ async function main(urls) {
        "No bucket name specified. Set the BUCKET_NAME env var to specify which Cloud Storage bucket the screenshot will be uploaded to."
      );
    }
-   let companyName = ''
-   let jobData = [];
-    if (url.includes("workable.com")) {
-      companyName = await getCompanyName(url).catch((err) => {
-        throw err;
-      });
+   let companyName = '';
+  let jobData = [];
+  if (url.includes("workable.com")) {
+    try {
+      companyName = await getCompanyName(url);
       if (companyName) {
-        jobData = await getWorkableData(companyName).catch((err) => {
-          throw err;
-        });
+        jobData = await getWorkableData(companyName);
+        console.log("Retrieved job data:", jobData);
       }
-    } else if (url.includes("greenhouse.io")) {
-  // handle greenhouse job fetch
-    } else {
-  // handle other types of URLs
-      throw new Error('Unsupported job board');
+    } catch (err) {
+      console.error('Error fetching data:', err);
+      return;
     }
+  } else if (url.includes("greenhouse.io")) {
+    // handle greenhouse job fetch
+  } else {
+    // handle other types of URLs
+    throw new Error('Unsupported job board');
+  }
+    
 
   console.log("Initializing Cloud Storage client");
   const storage = new Storage();
   const bucket = await createStorageBucketIfMissing(storage, bucketName);
 
   //upload to bucket and return the saved filename
-  //check that the companyName value has been filled
-  if (companyName) {
+  // Check that the companyName value has been filled
+  if (companyName && jobData && jobData.length > 0) {
+    console.log("SHOWING jobData on INDEX:", jobData);
+   
+    // Call uploadData only if companyName and jobData are valid
     const filename = await uploadData(bucket, taskIndex, companyName, jobData);
+    console.log("Job complete!", filename);
   } else {
-    console.error('Invalid job data: companyName property is missing:', companyName);
+    console.error('Invalid job data: companyName or jobData is missing or empty.');
   }
+
 
   //insert to Mongo using the saved filename to find file
   //await insertDataFromFile(filename)
