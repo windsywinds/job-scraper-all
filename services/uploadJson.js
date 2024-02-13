@@ -18,7 +18,7 @@ async function createStorageBucketIfMissing(storage, bucketName) {
   }
   
 
-  async function uploadData(bucket, taskIndex, companyName, jobData) {
+  async function uploadData(bucket, taskIndex, inputCompanyName, inputJobData) {
     // Set companyName to the provided value or an empty string if not provided
     let companyName = inputCompanyName || '';
     // Set jobData to the provided value or an empty array if not provided
