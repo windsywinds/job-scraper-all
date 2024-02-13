@@ -1,23 +1,25 @@
-const fetchWorkableFromAPI = require("./getWorkableData")
+const fetchWorkableFromAPI = require("./fetchWorkableData");
 
-async function getWorkableData(url) {
-  console.log("URL provided", url)
+
+//find the name of the business
+async function getCompanyName(url) {
+  console.log("URL provided", url);
   
   // identify job board name from url input
   url = url.replace(/\/+$/, '');
   const parts = url.split('/');
   const companyName = parts[parts.length - 1];
-  console.log(`getWorkableData using company name: ${companyName}`)
 
+  return companyName;
+}
+
+//get the job listings from the API
+async function getWorkableData(companyName) {
   //get data using api
   const jobData = await fetchWorkableFromAPI(companyName);
-  jobData.forEach((job, index) => {
-    console.log(`Job ${index + 1}: ${JSON.stringify(job)}`);
-});
-
-  console.log(`Data being returned on workable.js to index.js...`)
-  console.log(`Data being returned on workable.js to index.js: ${jobData}`)
-
-  return [companyName, jobData];
+  
+  return jobData;
 }
-module.exports = getWorkableData;
+
+module.exports = { getCompanyName, getWorkableData };
+

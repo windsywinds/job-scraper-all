@@ -2,10 +2,10 @@ const fs = require('fs');
 const puppeteer = require("puppeteer");
 const { Storage } = require("@google-cloud/storage");
 const createStorageBucketIfMissing = require("./services/uploadJson")
-
+const { getCompanyName, getWorkableData } = require("./workable/workable");
 const saveData = require("./services/saveLocal")
 const insertDataFromFile = require("./services/insertMongo")
-const getWorkableData = require('./workable/workable');
+
 
 async function main(urls) {
   console.log(`Passed in urls: ${urls}`);
@@ -27,35 +27,27 @@ async function main(urls) {
   // }
 
   console.log("Data retrieval started")
-  let jobData = [];
-   if (url.includes("workable")) {
-       jobData = await getWorkableData(url).catch((err) => {
-           throw err;
-       });
-   } else if (url.includes("greenhouse")) {
-       // handle greenhouse job fetch
-       jobData = await getGreenhouseData(url).catch((err) => {
-           throw err;
-       });
-   } else {
-       // handle other types of URLs or throw an error if needed
-       throw new Error('Unsupported job board');
-   }
+  let companyName = ''
+   let jobData = [];
+  if (url.includes("workable.com")) {
+    companyName = await getCompanyName(url)
+    if (companyName) {
+      jobData = await getWorkableData(companyName).catch((err) => {
+        throw err;
+      });
+    }
+} else if (url.includes("greenhouse.io")) {
+  // handle greenhouse job fetch
+} else {
+  // handle other types of URLs or throw an error if needed
+  throw new Error('Unsupported job board');
+}
    
   console.log("Data retrieval complete")
-  
- 
-
-  //console.log("Initializing Cloud Storage client");
-  //const storage = new Storage();
-  //const bucket = await createStorageBucketIfMissing(storage, bucketName);
-  //upload to bucket and return the saved jsonData
-  //const jsonData = await uploadData(bucket, taskIndex, jobData);
-
 
   //upload to cloud bucket and return the formatted data to be used in DB
   console.log("Data saving in progress...")
-  const filename = await saveData(taskIndex, jobData);
+  const filename = await saveData(taskIndex, companyName, jobData);
   console.log("Data save complete") 
 
   // Insert to MongoDB collection

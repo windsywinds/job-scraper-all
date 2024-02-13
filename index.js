@@ -1,7 +1,7 @@
 const fs = require('fs');
 const puppeteer = require("puppeteer");
 const { Storage } = require("@google-cloud/storage");
-const getWorkableData = require("./workable/workable")
+const { getCompanyName, getWorkableData } = require("./workable/workable");
 const createStorageBucketIfMissing = require("./services/uploadJson")
 const uploadData = require("./services/uploadJson")
 // const insertDataFromFile = require("./services/insertMongo")
@@ -32,38 +32,33 @@ async function main(urls) {
    }
    let companyName = ''
    let jobData = [];
-   
-if (url.includes("workable.com")) {
-  let [fetchedCompanyName, fetchedJobData] = await getWorkableData(url).catch((err) => {
-    throw err;
-  });
-  companyName = fetchedCompanyName
-  jobData = fetchedJobData; // Assigning the job data returned from the function
-
-} else if (url.includes("greenhouse.io")) {
+    if (url.includes("workable.com")) {
+      companyName = await getCompanyName(url).catch((err) => {
+        throw err;
+      });
+      if (companyName) {
+        jobData = await getWorkableData(companyName).catch((err) => {
+          throw err;
+        });
+      }
+    } else if (url.includes("greenhouse.io")) {
   // handle greenhouse job fetch
-} else {
-  // handle other types of URLs or throw an error if needed
-  throw new Error('Unsupported job board');
-}
+    } else {
+  // handle other types of URLs
+      throw new Error('Unsupported job board');
+    }
 
   console.log("Initializing Cloud Storage client");
-
   const storage = new Storage();
   const bucket = await createStorageBucketIfMissing(storage, bucketName);
 
   //upload to bucket and return the saved filename
-
+  //check that the companyName value has been filled
   if (companyName) {
-    console.log("SHOWING jobData on INDEX");
-   
-   
-    
-    // Call uploadData only if companyName is valid
     const filename = await uploadData(bucket, taskIndex, companyName, jobData);
-} else {
+  } else {
     console.error('Invalid job data: companyName property is missing:', companyName);
-}
+  }
 
   //insert to Mongo using the saved filename to find file
   //await insertDataFromFile(filename)

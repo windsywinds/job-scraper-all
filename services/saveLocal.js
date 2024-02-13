@@ -2,17 +2,16 @@
 
 const fs = require('fs');
  
-  async function saveData(taskIndex, jobData) {
+  async function saveData(taskIndex, companyName, jobData) {
   const applyLink = 'https://apply.workable.com/';
-    const companyName = jobData.companyName
     // Create filename using the current time, company name and task index
     const date = new Date();
     date.setMinutes(date.getMinutes() - date.getTimezoneOffset());
-    const filename = `${date.toISOString().replace(/:/g, '_')}-${jobData.companyName.replace(/:/g, '_').replace(/\//g, '_')}-task${taskIndex}`;
+    const filename = `${date.toISOString().replace(/:/g, '_')}-${companyName}-task${taskIndex}`;
     
   
     // Upload JSON data for all jobs related to the URL given
-    const jsonData = jobData.jobData.map((job, index) => ({
+    const jsonData = jobData.map((job, index) => ({
         createdAt: job.published,
         status: '',
         companyId: '',
