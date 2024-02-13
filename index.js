@@ -44,7 +44,8 @@ async function main(urls) {
    }
    
  
-
+   console.log(`Using company name.`)
+   console.log(`Using company name: ${jobData.companyName}`)
   console.log("Initializing Cloud Storage client");
   const storage = new Storage();
   const bucket = await createStorageBucketIfMissing(storage, bucketName);
