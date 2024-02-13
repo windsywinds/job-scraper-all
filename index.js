@@ -44,14 +44,14 @@ async function main(urls) {
    }
    
  
-   console.log(`Using company name.`)
-   console.log(`Using company name: ${jobData.companyName}`)
   console.log("Initializing Cloud Storage client");
+
   const storage = new Storage();
   const bucket = await createStorageBucketIfMissing(storage, bucketName);
 
   //upload to bucket and return the saved filename
-  const filename = await uploadData(bucket, taskIndex, jobData);
+  const companyName = jobData.companyName
+  const filename = await uploadData(bucket, taskIndex, companyName, jobData);
 
   //insert to Mongo using the saved filename to find file
   //await insertDataFromFile(filename)
