@@ -30,21 +30,23 @@ async function main(urls) {
        "No bucket name specified. Set the BUCKET_NAME env var to specify which Cloud Storage bucket the screenshot will be uploaded to."
      );
    }
-
+   let companyName = ''
    let jobData = [];
-   if (url.includes("workable.com")) {
-       jobData = await getWorkableData(url).catch((err) => {
-           throw err;
-       });
-   } else if (url.includes("greenhouse.io")) {
-       // handle greenhouse job fet
-   } else {
-       // handle other types of URLs or throw an error if needed
-       throw new Error('Unsupported job board');
-   }
+   
+if (url.includes("workable.com")) {
+  let [fetchedCompanyName, fetchedJobData] = await getWorkableData(url).catch((err) => {
+    throw err;
+  });
+  companyName = fetchedCompanyName
+  jobData = fetchedJobData; // Assigning the job data returned from the function
 
-  const companyName = jobData.companyName
- 
+} else if (url.includes("greenhouse.io")) {
+  // handle greenhouse job fetch
+} else {
+  // handle other types of URLs or throw an error if needed
+  throw new Error('Unsupported job board');
+}
+
   console.log("Initializing Cloud Storage client");
 
   const storage = new Storage();
@@ -54,11 +56,11 @@ async function main(urls) {
 
   if (companyName) {
     console.log("SHOWING jobData on INDEX");
-    const jobsData = jobData.jobData;
-    console.log(jobsData);
+   
+   
     
     // Call uploadData only if companyName is valid
-    const filename = await uploadData(bucket, taskIndex, companyName, jobsData);
+    const filename = await uploadData(bucket, taskIndex, companyName, jobData);
 } else {
     console.error('Invalid job data: companyName property is missing:', companyName);
 }

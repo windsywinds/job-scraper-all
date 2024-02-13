@@ -18,12 +18,12 @@ async function createStorageBucketIfMissing(storage, bucketName) {
   }
   
 
-  async function uploadData(bucket, taskIndex, companyName, jobsData) {
-    
+  async function uploadData(bucket, taskIndex, companyName, jobData) {
+
     console.log('CompanyName property found:', companyName);
 
     console.log("SHOWING jobData on UPLOADDATA")
-    const logData = jobsData
+    const logData = jobData
     console.log(logData)
     const applyLink = 'https://apply.workable.com/';
     
@@ -34,7 +34,7 @@ async function createStorageBucketIfMissing(storage, bucketName) {
     const filename = `${date.toISOString().replace(/:/g, '_')}-${companyName}-task${taskIndex}`;
     
     // Upload JSON data for all jobs related to the URL given
-    const jsonData = jobsData.map((job, index) => ({
+    const jsonData = jobData.map((job, index) => ({
       createdAt: job.published,
       status: '',
       companyId: '',

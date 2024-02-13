@@ -11,9 +11,13 @@ async function getWorkableData(url) {
 
   //get data using api
   const jobData = await fetchWorkableFromAPI(companyName);
+  jobData.forEach((job, index) => {
+    console.log(`Job ${index + 1}: ${JSON.stringify(job)}`);
+});
+
   console.log(`Data being returned on workable.js to index.js...`)
   console.log(`Data being returned on workable.js to index.js: ${jobData}`)
 
-  return { companyName, jobData };
+  return [companyName, jobData];
 }
 module.exports = getWorkableData;
