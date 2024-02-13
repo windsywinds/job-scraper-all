@@ -53,8 +53,9 @@ async function main(urls) {
   //upload to bucket and return the saved filename
 
   console.log("SHOWING jobData on INDEX")
-  console.log(jobData.jobData)
-  const filename = await uploadData(bucket, taskIndex, companyName, jobData);
+  const jobsData = jobData.jobData
+  console.log(jobsData)
+  const filename = await uploadData(bucket, taskIndex, companyName, jobsData);
 
   //insert to Mongo using the saved filename to find file
   //await insertDataFromFile(filename)
