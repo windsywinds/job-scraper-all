@@ -56,7 +56,7 @@ async function main(urls) {
   const filename = await uploadData(bucket, taskIndex, jobData);
 
   //insert to Mongo using the saved filename to find file
-  await insertDataFromFile(filename)
+  //await insertDataFromFile(filename)
   console.log("Job complete!", filename);
 }
 
