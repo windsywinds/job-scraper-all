@@ -32,11 +32,11 @@ async function main(urls) {
    }
 
    let jobData = [];
-   if (url.includes("workable")) {
+   if (url.includes("workable.com")) {
        jobData = await getWorkableData(url).catch((err) => {
            throw err;
        });
-   } else if (url.includes("greenhouse")) {
+   } else if (url.includes("greenhouse.io")) {
        // handle greenhouse job fet
    } else {
        // handle other types of URLs or throw an error if needed
