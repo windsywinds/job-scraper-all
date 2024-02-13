@@ -11,7 +11,7 @@ async function getWorkableData(url) {
 
   //get data using api
   const jobData = await fetchWorkableFromAPI(companyName);
-  console.log(`Data being returned: ${jobData.json()}}`)
+  console.log(`Data being returned on workable.js to index.js: ${jobData.data}}`)
 
   return { companyName, jobData };
 }

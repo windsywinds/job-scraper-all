@@ -42,8 +42,8 @@ async function main(urls) {
        // handle other types of URLs or throw an error if needed
        throw new Error('Unsupported job board');
    }
-   const companyName = jobData.companyName
-   console.log("INDEX.JS CompanyName to pass:", companyName)
+
+  const companyName = jobData.companyName
  
   console.log("Initializing Cloud Storage client");
 
@@ -52,10 +52,16 @@ async function main(urls) {
 
   //upload to bucket and return the saved filename
 
-  console.log("SHOWING jobData on INDEX")
-  const jobsData = jobData.jobData
-  console.log(jobsData)
-  const filename = await uploadData(bucket, taskIndex, companyName, jobsData);
+  if (companyName) {
+    console.log("SHOWING jobData on INDEX");
+    const jobsData = jobData.jobData;
+    console.log(jobsData);
+    
+    // Call uploadData only if companyName is valid
+    const filename = await uploadData(bucket, taskIndex, companyName, jobsData);
+} else {
+    console.error('Invalid job data: companyName property is missing:', companyName);
+}
 
   //insert to Mongo using the saved filename to find file
   //await insertDataFromFile(filename)

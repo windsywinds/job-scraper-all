@@ -19,16 +19,13 @@ async function createStorageBucketIfMissing(storage, bucketName) {
   
 
   async function uploadData(bucket, taskIndex, companyName, jobsData) {
+    
+    console.log('CompanyName property found:', companyName);
+
     console.log("SHOWING jobData on UPLOADDATA")
     const logData = jobsData
     console.log(logData)
     const applyLink = 'https://apply.workable.com/';
-    if (!companyName) {
-        console.error('Invalid job data: companyName property is missing:', companyName);
-    } else if (companyName) {
-      console.log('CompanyName property found:', companyName);
-    }
-
     
     console.log(`Uploading json file for jobs from https://apply.workable.com/${companyName} `)
     // Create filename using the current time, company name and task index
