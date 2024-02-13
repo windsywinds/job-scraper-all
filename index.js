@@ -31,10 +31,19 @@ async function main(urls) {
      );
    }
 
-   const jobData = await getWorkableData(url).catch(async (err) => {
-    throw err;
-  });
-   
+   let jobData = [];
+   if (url.includes("workable.com")) {
+       jobData = await getWorkableData(url).catch((err) => {
+           throw err;
+       });
+   } else if (url.includes("greenhouse.io")) {
+       // handle greenhouse job fet
+   } else {
+       // handle other types of URLs or throw an error if needed
+       throw new Error('Unsupported job board');
+   }
+   const companyName = jobData.companyName
+   console.log("INDEX.JS CompanyName to pass:", companyName)
  
   console.log("Initializing Cloud Storage client");
 
@@ -42,8 +51,7 @@ async function main(urls) {
   const bucket = await createStorageBucketIfMissing(storage, bucketName);
 
   //upload to bucket and return the saved filename
-  const companyName = jobData.companyName
-  console.log("CompanyName to pass:", companyName)
+
   console.log("SHOWING jobData on INDEX")
   console.log(jobData.jobData)
   const filename = await uploadData(bucket, taskIndex, companyName, jobData);

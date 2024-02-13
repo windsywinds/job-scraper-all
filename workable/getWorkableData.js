@@ -52,7 +52,7 @@ async function fetchWorkableFromAPI(companyName) {
         // Continue with the loop even if there's an error fetching job details
       }
     }
-    console.log("Merge complete")
+    console.log("Merge complete", data)
     return data
   } catch (error) {
     console.error('Error fetching jobs:', error);
