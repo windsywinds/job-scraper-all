@@ -31,17 +31,9 @@ async function main(urls) {
      );
    }
 
-   let jobData = [];
-   if (url.includes("workable.com")) {
-       jobData = await getWorkableData(url).catch((err) => {
-           throw err;
-       });
-   } else if (url.includes("greenhouse.io")) {
-       // handle greenhouse job fet
-   } else {
-       // handle other types of URLs or throw an error if needed
-       throw new Error('Unsupported job board');
-   }
+   const jobData = await getWorkableData(url).catch(async (err) => {
+    throw err;
+  });
    
  
   console.log("Initializing Cloud Storage client");
