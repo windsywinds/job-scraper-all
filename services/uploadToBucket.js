@@ -18,7 +18,7 @@ async function createStorageBucketIfMissing(storage, bucketName) {
   }
   
 
-  async function uploadData(bucket, taskIndex, inputCompanyName, inputJobData) {
+  async function uploadDataToBucket(bucket, taskIndex, inputCompanyName, inputJobData) {
     // Set companyName to the provided value or an empty string if not provided
     let companyName = inputCompanyName || '';
     // Set jobData to the provided value or an empty array if not provided
@@ -35,9 +35,6 @@ async function createStorageBucketIfMissing(storage, bucketName) {
         console.log("No valid job data found for file upload");
         return;
     }
-
-    console.log(`CompanyName property on UPLOADATA as: ${companyName}`);
-    console.log(`SHOWING jobData on UPLOADDATA as: ${jobData}`)
 
     const applyLink = 'https://apply.workable.com/';
     
@@ -75,10 +72,10 @@ async function createStorageBucketIfMissing(storage, bucketName) {
     console.log(`Uploading data as '${filename}.json'`);
     await bucket.file(`${filename}.json`).save(JSON.stringify(jsonData));
 
-    //return the filename to be used for database insertion
-    //return JSON.stringify(jsonData)
+    //return the filename to be used for database insertion?
+    //return JSON.stringify(jsonData)?
     //willgCloud read the file or does it need passing raw data?
     return filename
   }
 
-  module.exports = { uploadData, createStorageBucketIfMissing };
+  module.exports = { uploadDataToBucket, createStorageBucketIfMissing };

@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "workable": "node local.js https://apply.workable.com/auror"
+    "workable": "node local.js https://apply.workable.com/auror",
+    "prettier": "prettier . --write"
   },
   "author": "Google LLC",
   "license": "Apache-2.0",
@@ -13,6 +14,7 @@
     "@google-cloud/storage": "^5.18.2",
     "dotenv": "^16.4.3",
     "mongodb": "^6.3.0",
+    "prettier": "^3.2.5",
     "puppeteer": "^15.0.0"
   }
 }

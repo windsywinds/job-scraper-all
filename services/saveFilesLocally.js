@@ -1,8 +1,8 @@
-//this can be replaced with uploadJson to save the json file locally for tests
+//this fucntion will save the json data locally for testing
 
 const fs = require('fs');
  
-  async function saveData(taskIndex, companyName, jobData) {
+  async function saveFileLocally(taskIndex, companyName, jobData) {
   const applyLink = 'https://apply.workable.com/';
     // Create filename using the current time, company name and task index
     const date = new Date();
@@ -34,9 +34,6 @@ const fs = require('fs');
         },
         hiringManagerIds: [''],
     }));
-  
-    console.log(`Uploading data as '${filename}.json'`);
-    //await bucket.file(`${filename}.json`).save(JSON.stringify(jsonData));
     
     fs.writeFile(`${filename}.json`, JSON.stringify(jsonData, null, 2), (err) => {
     if (err) throw err;
@@ -46,4 +43,4 @@ const fs = require('fs');
     return filename
   }
 
-  module.exports = saveData;
+  module.exports = saveFileLocally;

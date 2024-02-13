@@ -2,7 +2,7 @@ const fetchWorkableFromAPI = require("./fetchWorkableData");
 
 
 //find the name of the business
-async function getCompanyName(url) {
+async function getWorkableCompanyName(url) {
   console.log("Extracting company name from url:", url);
   
   // identify job board name from url input
@@ -21,5 +21,5 @@ async function getWorkableData(companyName) {
   return jobData;
 }
 
-module.exports = { getCompanyName, getWorkableData };
+module.exports = { getWorkableCompanyName, getWorkableData };
 

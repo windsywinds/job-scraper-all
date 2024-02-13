@@ -1,10 +1,10 @@
 const fs = require('fs');
 const puppeteer = require("puppeteer");
 const { Storage } = require("@google-cloud/storage");
-const { getCompanyName, getWorkableData } = require("./workable/workable");
-const { createStorageBucketIfMissing, uploadData} = require("./services/uploadJson")
+const { getWorkableCompanyName, getWorkableData } = require("./workable/workable");
+const { createStorageBucketIfMissing, uploadDataToBucket} = require("./services/uploadToBucket")
 
-// const insertDataFromFile = require("./services/insertMongo")
+const insertDataToDatabase = require("./services/insertToDatabase")
 
 async function initBrowser() {
   console.log("Initializing browser");
@@ -34,7 +34,7 @@ async function main(urls) {
 let jobData = [];
 try {
     if (url.includes("workable.com")) {
-        companyName = await getCompanyName(url);
+        companyName = await getWorkableCompanyName(url);
         if (companyName) {
             jobData = await getWorkableData(companyName);
         }
@@ -52,17 +52,16 @@ try {
     // Set jobData to the provided value or an empty array if not provided
     let inputJobData = Array.isArray(jobData) ? jobData : [];
 
+    //upload to bucket and return the saved filename
     console.log("Initializing Cloud Storage client");
     const storage = new Storage();
     const bucket = await createStorageBucketIfMissing(storage, bucketName);
-
-    //upload to bucket and return the saved filename
     // Check that the companyName value has been filled
     if (inputCompanyName && inputJobData) {
-        console.log("SHOWING jobData on INDEX:", jobData[1]);
-
         // Call uploadData only if companyName and jobData are valid
-        const filename = await uploadData(bucket, taskIndex, inputCompanyName, inputJobData);
+        const filename = await uploadDataToBucket(bucket, taskIndex, inputCompanyName, inputJobData);
+        //insert to Mongo using the saved filename to find file
+        await insertDataToDatabase(filename)
         console.log("Job complete!", filename);
     } else {
         console.error('Invalid job data: companyName or jobData is missing or empty.');
@@ -70,11 +69,6 @@ try {
 } catch (err) {
     console.error('Error fetching or saving data:', err);
 }
-
-
-
-  //insert to Mongo using the saved filename to find file
-  //await insertDataFromFile(filename)
 
 }
 

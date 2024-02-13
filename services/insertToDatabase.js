@@ -2,7 +2,7 @@ const { MongoClient } = require('mongodb');
 const fs = require('fs').promises;
 require('dotenv').config();
 
-const uriString = process.env.MONGO_URI || 'jobs-dev-user:REMOVED.z2lud.mongodb.net/jobs-dev?retryWrites=true&w=majority'
+const uriString = process.env.MONGO_URI
 
 // Connection URI
 const uri = 'mongodb+srv://' + uriString 
@@ -12,7 +12,7 @@ const dbName = 'jobs-dev';
 
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 
-async function insertDataFromFile(filename) {
+async function insertDataToDatabase(filename) {
     try {
         await client.connect();
         const db = client.db(dbName);
@@ -20,7 +20,7 @@ async function insertDataFromFile(filename) {
         const jsonData = await fs.readFile(`${filename}.json`, 'utf8');
         const data = JSON.parse(jsonData);
 
-        const result = await db.collection('Jobs-test').insertMany(data);
+        const result = await db.collection('Jobs-gcloud').insertMany(data);
         console.log(`${result.insertedCount} documents inserted`);
     } catch (error) {
         console.error('Error inserting data:', error);
@@ -28,4 +28,4 @@ async function insertDataFromFile(filename) {
         await client.close();
     }
 }
-module.exports = insertDataFromFile;
+module.exports = insertDataToDatabase;
