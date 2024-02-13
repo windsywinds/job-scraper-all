@@ -2,9 +2,10 @@ const { MongoClient } = require('mongodb');
 const fs = require('fs').promises;
 require('dotenv').config();
 
+const uriString = process.env.MONGO_URI || 'jobs-dev-user:REMOVED.z2lud.mongodb.net/jobs-dev?retryWrites=true&w=majority'
 
 // Connection URI
-const uri = process.env.MONGO_URI;
+const uri = 'mongodb+srv://' + uriString 
 
 // Database Name
 const dbName = 'jobs-dev';

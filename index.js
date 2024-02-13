@@ -4,7 +4,7 @@ const { Storage } = require("@google-cloud/storage");
 const getWorkableData = require("./workable/workable")
 const createStorageBucketIfMissing = require("./services/uploadJson")
 const uploadData = require("./services/uploadJson")
-const insertDataFromFile = require("./services/insertMongo")
+// const insertDataFromFile = require("./services/insertMongo")
 
 async function initBrowser() {
   console.log("Initializing browser");
@@ -37,10 +37,7 @@ async function main(urls) {
            throw err;
        });
    } else if (url.includes("greenhouse")) {
-       // handle greenhouse job fetch
-       jobData = await getGreenhouseData(url).catch((err) => {
-           throw err;
-       });
+       // handle greenhouse job fet
    } else {
        // handle other types of URLs or throw an error if needed
        throw new Error('Unsupported job board');
