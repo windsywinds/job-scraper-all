@@ -51,7 +51,7 @@ async function main(urls) {
 
   //upload to bucket and return the saved filename
   const companyName = jobData.companyName
-  console.log("CompanyName:", companyName)
+  console.log("CompanyName to pass:", companyName)
   console.log("SHOWING jobData on INDEX")
   console.log(jobData.jobData)
   const filename = await uploadData(bucket, taskIndex, companyName, jobData);
