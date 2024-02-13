@@ -2,8 +2,8 @@ const fs = require('fs');
 const puppeteer = require("puppeteer");
 const { Storage } = require("@google-cloud/storage");
 const { getCompanyName, getWorkableData } = require("./workable/workable");
-const createStorageBucketIfMissing = require("./services/uploadJson")
-const uploadData = require("./services/uploadJson")
+const { createStorageBucketIfMissing, uploadData} = require("./services/uploadJson")
+
 // const insertDataFromFile = require("./services/insertMongo")
 
 async function initBrowser() {
@@ -37,7 +37,7 @@ async function main(urls) {
       companyName = await getCompanyName(url);
       if (companyName) {
         jobData = await getWorkableData(companyName);
-        console.log("Retrieved job data:", jobData);
+        console.log("Retrieved job data:", jobData.length);
       }
     } catch (err) {
       console.error('Error fetching data:', err);
@@ -58,7 +58,7 @@ async function main(urls) {
   //upload to bucket and return the saved filename
   // Check that the companyName value has been filled
   if (companyName && jobData && jobData.length > 0) {
-    console.log("SHOWING jobData on INDEX:", jobData);
+    console.log("SHOWING jobData on INDEX:", jobData[1]);
    
     // Call uploadData only if companyName and jobData are valid
     const filename = await uploadData(bucket, taskIndex, companyName, jobData);
@@ -70,7 +70,7 @@ async function main(urls) {
 
   //insert to Mongo using the saved filename to find file
   //await insertDataFromFile(filename)
-  console.log("Job complete!", filename);
+
 }
 
 main(process.argv.slice(2)).catch((err) => {

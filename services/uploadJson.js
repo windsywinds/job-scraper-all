@@ -19,9 +19,25 @@ async function createStorageBucketIfMissing(storage, bucketName) {
   
 
   async function uploadData(bucket, taskIndex, companyName, jobData) {
+    // Set companyName to the provided value or an empty string if not provided
+    let companyName = inputCompanyName || '';
+    // Set jobData to the provided value or an empty array if not provided
+    let jobData = Array.isArray(inputJobData) ? inputJobData : [];
 
-    console.log(`CompanyName property on UPLOADATA as string(): ${companyName}`);
-    console.log(`SHOWING jobData on UPLOADDATA as JSON.stringify: ${jobData}`)
+    // Check if companyName is empty or not a string
+    if (typeof companyName !== 'string' || companyName.trim() === '') {
+        console.log("No valid company name found for file upload");
+        return;
+    }
+
+    // Check if jobData is not an array or if it's an empty array
+    if (!Array.isArray(jobData) || jobData.length === 0) {
+        console.log("No valid job data found for file upload");
+        return;
+    }
+
+    console.log(`CompanyName property on UPLOADATA as: ${companyName}`);
+    console.log(`SHOWING jobData on UPLOADDATA as: ${jobData}`)
 
     const applyLink = 'https://apply.workable.com/';
     
@@ -65,4 +81,4 @@ async function createStorageBucketIfMissing(storage, bucketName) {
     return filename
   }
 
-  module.exports = uploadData, createStorageBucketIfMissing;
+  module.exports = { uploadData, createStorageBucketIfMissing };

@@ -3,7 +3,7 @@ const fetchWorkableFromAPI = require("./fetchWorkableData");
 
 //find the name of the business
 async function getCompanyName(url) {
-  console.log("URL provided", url);
+  console.log("Extracting company name from url:", url);
   
   // identify job board name from url input
   url = url.replace(/\/+$/, '');
