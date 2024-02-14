@@ -59,7 +59,7 @@ async function main(urls) {
     if (inputCompanyName && inputJobData.length > 0) {
     // Call uploadData only if companyName and jobData are valid
     const filename = await saveFileLocally(taskIndex, inputCompanyName, inputJobData);
-    
+    // Insert to MongoDB collection
     await insertDataToDatabase(bucketName, filename)
 } else {
     console.error('Invalid job data: companyName or jobData is missing or empty.');
@@ -67,10 +67,6 @@ async function main(urls) {
 } catch (err) {
 console.error('Error fetching or saving data:', err);
 }
-
-  // Insert to MongoDB collection
-  
-
   //confirm completion
   console.log("Job complete!");
 }
