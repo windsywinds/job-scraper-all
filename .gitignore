@@ -4,5 +4,5 @@ npm-debug.log
 # local output files
 *task*.json
 *.png
-.env
+
 */bak*
