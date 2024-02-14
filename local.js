@@ -54,15 +54,13 @@ async function main(urls) {
     let inputJobData = Array.isArray(jobData) ? jobData : [];
 
     console.log("Initializing Cloud Storage client");
-    const storage = new Storage();
-    const bucket = await createStorageBucketIfMissing(storage, bucketName);
-
-    //upload to bucket and return the saved filename
+    const bucketName = 'none'
     // Check that the companyName value has been filled
-    if (inputCompanyName && inputJobData.length < 0) {
+    if (inputCompanyName && inputJobData.length > 0) {
     // Call uploadData only if companyName and jobData are valid
     const filename = await saveFileLocally(taskIndex, inputCompanyName, inputJobData);
-    await insertDataToDatabase(filename)
+    
+    await insertDataToDatabase(bucketName, filename)
 } else {
     console.error('Invalid job data: companyName or jobData is missing or empty.');
 }

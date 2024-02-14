@@ -61,7 +61,7 @@ try {
         // Call uploadData only if companyName and jobData are valid
         const filename = await uploadDataToBucket(bucket, taskIndex, inputCompanyName, inputJobData);
         //insert to Mongo using the saved filename to find file
-        await insertDataToDatabase(filename)
+        await insertDataToDatabase(bucketName, filename)
         console.log("Job complete!", filename);
     } else {
         console.error('Invalid job data: companyName or jobData is missing or empty.');
