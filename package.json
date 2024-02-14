@@ -1,7 +1,7 @@
 {
-  "name": "workable-scraper",
+  "name": "job-board-scraper",
   "version": "1.0.0",
-  "description": "Create a job to capture workable job postings",
+  "description": "Create a job to capture job postings",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -14,7 +14,9 @@
     "@google-cloud/storage": "^5.18.2",
     "dotenv": "^16.4.3",
     "mongodb": "^6.3.0",
-    "prettier": "^3.2.5",
     "puppeteer": "^15.0.0"
+  },
+  "devDependencies": {
+    "prettier": "^3.2.5"
   }
 }

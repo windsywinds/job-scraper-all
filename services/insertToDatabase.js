@@ -26,15 +26,22 @@ async function insertDataToDatabase(bucketName, filename) {
             const bucket = storage.bucket(bucketName);
             const file = bucket.file(filename);
 
-            // Download the file to a local temporary location
-            const tempFilePath = `/tmp/${filename}`;
-            await file.download({ destination: tempFilePath });
+            // Get a readable stream for the file
+            const fileStream = file.createReadStream();
 
-            // Read the downloaded file
-            jsonData = await fs.readFile(tempFilePath, 'utf8');
-
-            // Clean up the temporary file
-            await fs.unlink(tempFilePath);
+            // Read the file's contents
+            jsonData = await new Promise((resolve, reject) => {
+                let data = '';
+                fileStream.on('data', (chunk) => {
+                    data += chunk;
+                });
+                fileStream.on('end', () => {
+                    resolve(data);
+                });
+                fileStream.on('error', (err) => {
+                    reject(err);
+                });
+            });
         } else {
             // Read the local file
             jsonData = await fs.readFile(`${filename}.json`, 'utf8');
