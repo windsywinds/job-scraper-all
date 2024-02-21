@@ -1,14 +1,15 @@
-# Workable Scraper Job
+# Job Board Scraper
 
-Create a Cloud Run job to output Workable job board entries into a .json file.
-
+Create a Cloud Run job to insert job board entries into MongoDatabase
 
 # Clone repo via shell
+
 ```sh
 git clone https://github.com/account/repo.git
 ```
 
-# Setup gcloud 
+# Setup gcloud
+
 ```sh
 PROJECT_ID=$PROJECT_ID
 REGION=australia-southeast1
@@ -16,6 +17,7 @@ gcloud config set core/project $PROJECT_ID
 ```
 
 # Enable APIs
+
 ```sh
 gcloud services enable \
   artifactregistry.googleapis.com \
@@ -24,16 +26,19 @@ gcloud services enable \
 ```
 
 # CD into project dir
+
 ```sh
-cd $PROJECT_ID
+cd <repo directory name>
 ```
 
 # Create service account
+
 ```sh
 gcloud iam service-accounts create workablescraper-sa --display-name="Workable Scraper service account"
 ```
 
 # Give service account access
+
 ```sh
 gcloud projects add-iam-policy-binding $PROJECT_ID \
   --role roles/storage.admin \
@@ -41,6 +46,7 @@ gcloud projects add-iam-policy-binding $PROJECT_ID \
 ```
 
 # Create Cloud Run Job
+
 ```sh
 gcloud beta run jobs deploy workablescraper \
   --source=. \
@@ -54,11 +60,13 @@ gcloud beta run jobs deploy workablescraper \
 ```
 
 # Run Cloud Run Job
+
 ```sh
 gcloud run jobs execute workablescraper --region=australia-southeast1
 ```
 
-# Update Job 
+# Update Job
+
 ```sh
 gcloud run jobs update workablescraper \
   --args="https://apply.workable.com/$BOARD_NAME1" \

@@ -1,0 +1,427 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model Alljobs {
+ id String @id @default(auto()) @map("_id") @db.ObjectId
+ createdAt String
+ status String
+ companyId String
+ applyLink String
+ title String
+ workStyle String[]
+ workType String[]
+ seniority String[]
+ locations String[]
+ timing String[]
+ areas String[]
+ images String[]
+ video Json?
+ audio String[]
+ description String
+ questions Json?
+ hiringManagerIds String[]
+}
+
+enum REGISTRATION_STATUS {
+  PROVIDED_EMAIL
+  HALF
+  COMPLETE
+}
+
+enum OFFER_STATUS {
+  CLAIMED
+  UNCLAIMED
+}
+
+enum CONVERSATION_TYPE {
+  DISCUSSION
+  UPDATE
+}
+
+enum ACCOUNT_ROLE {
+  ADMIN
+}
+
+enum GROUP_ROLE {
+  PENDING
+  RESTRICTED
+  MEMBER
+  HOST
+  ADMIN
+}
+
+enum PLAN {
+  FREE
+  STARTER
+  PRO
+}
+
+enum GROUP_TYPE {
+  PRIVATE
+  PUBLIC
+}
+
+enum NOTIFICATION_PREFERENCE {
+  PUSH
+  DAILY
+}
+
+enum RESPONSE_RATE {
+  QUICK
+  AVERAGE
+  SLOW
+}
+
+enum EVENT_TYPE {
+  FIRST_GROUP
+  JOINED_GROUP
+  MEMBERSHIP_CREATE
+  PRIVATE_MESSAGE
+  GROUP_UPDATE
+  DISCUSSION_CREATE
+  THREAD_CREATE
+  THREAD_REPLY
+}
+
+model User {
+  uuid                    String              @id @default(uuid()) @map("_id")
+  createdAt               String?
+  name                    String
+  role                    String
+  email                   String              @unique
+  profileUrl              String?             @unique
+  imageUrl                String?
+  bio                     String?
+  expertise               String?
+  jobTitle                String?
+  company                 String?
+  ghost                   Boolean?
+  verified                Boolean             @default(false)
+  tag                     String?
+  registrationStatus      REGISTRATION_STATUS
+  audioBio                String?
+  pseudonym               String?
+  marketingConsent        Boolean             @default(true)
+  socialId                String?
+  provider                String?
+  linkedIn                String?
+  loginToken              String?
+  loginTokenExpiresAt     String?
+  stripeCustomerId        String?
+  stripeSubscriptionId    String?
+  notificationPreferences Json?
+  responseRate            RESPONSE_RATE       @default(QUICK)
+  plan                    PLAN                @default(FREE)
+  chats                   Chat[]              @relation(fields: [chatIDs], references: [id])
+  chatIDs                 String[]
+  discussions             Discussion[]
+  replies                 Reply[]
+  thread                  Thread[]
+  messages                Message[]
+  promptResponses         PromptResponse[]
+  notifications           Notification[]
+  polls                   Poll[]
+  membership              Membership[]
+  groupsCreated           Group[]
+  conversations           Conversation[]
+  comments                Comment[]
+  accountMembership       AccountMembership[]
+}
+
+model Notification {
+  id              String                  @id @default(uuid()) @map("_id")
+  process         NOTIFICATION_PREFERENCE @default(PUSH)
+  targerUser      User                    @relation(fields: [targetUserId], references: [uuid])
+  targetUserId    String
+  targetUserEmail String
+  hasSentEmail    Boolean                 @default(false)
+  hasViewedInTray Boolean                 @default(false)
+  hasViewedInSitu Boolean                 @default(false)
+  context         Json? // used for group id and name
+  content         String?
+  event           EVENT_TYPE
+  eventId         String
+  itemId          String? // messageId, threadId etc 
+  originator      Json?
+  createdAt       String
+  originatorName  String? // deprecated in favour of originator
+  originatorImage String? // deprecated in favour of originator
+  eventTypeUuid   String? // deprecated in favour of eventid
+  targetItemId    String? // deprecated in favour of itemId 
+  groupName       String? // deprecated in favour of context
+  groupId         String? // deprecated in favour of context
+}
+
+model Session {
+  id         String   @id @default(uuid()) @map("_id")
+  groupId    String
+  inviteCode String
+  createdAt  DateTime
+  email      String
+  notified   Boolean  @default(false)
+}
+
+model Prompt {
+  id              String           @id @default(uuid()) @map("_id")
+  category        String
+  priority        Int
+  text            String
+  promptResponses PromptResponse[]
+}
+
+model PromptResponse {
+  id       String  @id @default(uuid()) @map("_id")
+  prompt   Prompt  @relation(fields: [promptId], references: [id])
+  answer   String
+  promptId String
+  user     User?   @relation(fields: [userId], references: [uuid])
+  userId   String?
+}
+
+model Chat {
+  id             String    @id @default(uuid()) @map("_id")
+  messages       Message[]
+  participants   User[]    @relation(fields: [participantIDs], references: [uuid])
+  updatedAt      String?
+  participantIDs String[]
+  anonymous      String[]
+  createdAt      String
+  source         String?
+}
+
+model Message {
+  id        String  @id @default(uuid()) @map("_id")
+  owner     User?   @relation(fields: [ownerId], references: [uuid])
+  ownerId   String?
+  content   String
+  chat      Chat?   @relation(fields: [chatId], references: [id])
+  chatId    String?
+  createdAt String
+  reaction  String?
+  context   String?
+  from      String? // deprecated
+  appearAs  String? // deprecated in favour of making the chat anonymous or not
+}
+
+model Vote {
+  id       String  @id @default(uuid()) @map("_id")
+  user     String
+  thread   Thread? @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  threadId String?
+  option   Option? @relation(fields: [optionId], references: [id], onDelete: Cascade)
+  optionId String?
+}
+
+model Reply {
+  id        String  @id @default(uuid()) @map("_id")
+  anonymous Boolean
+  text      String?
+  audio     String?
+  owner     User    @relation(fields: [ownerId], references: [uuid])
+  ownerId   String
+  createdAt String
+  thread    Thread? @relation(fields: [threadId], references: [id])
+  threadId  String?
+}
+
+model Thread {
+  id           String     @id @default(uuid()) @map("_id")
+  anonymous    Boolean
+  text         String?
+  audio        String?
+  owner        User       @relation(fields: [ownerId], references: [uuid])
+  ownerId      String
+  discussion   Discussion @relation(fields: [discussionId], references: [id], onDelete: Cascade)
+  discussionId String
+  votes        Vote[]
+  replies      Reply[]
+  createdAt    String
+}
+
+model Option {
+  id     String  @id @default(uuid()) @map("_id")
+  text   String
+  votes  Vote[]
+  poll   Poll?   @relation(fields: [pollId], references: [id], onDelete: Cascade)
+  pollId String?
+}
+
+model Poll {
+  id           String      @id @default(uuid()) @map("_id")
+  text         String
+  options      Option[]
+  optionIDs    String[]
+  discussion   Discussion? @relation(fields: [discussionId], references: [id], onDelete: Cascade)
+  discussionId String?     @unique
+  group        Group?      @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  groupId      String?
+  createdAt    String
+  ownerId      String?
+  owner        User?       @relation(fields: [ownerId], references: [uuid])
+}
+
+model Discussion {
+  id        String   @id @default(uuid()) @map("_id")
+  text      String
+  audio     String?
+  threads   Thread[]
+  ownerId   String
+  owner     User     @relation(fields: [ownerId], references: [uuid])
+  anonymous Boolean
+  external  Boolean? @default(false)
+  poll      Poll?
+  pollId    String?
+  createdAt String
+  expiresAt String
+  group     Group?   @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  groupId   String?
+}
+
+model Conversation {
+  id        String            @id @default(uuid()) @map("_id")
+  text      String
+  audio     String?
+  ownerId   String
+  quickCode String?
+  anonymous Boolean           @default(false)
+  type      CONVERSATION_TYPE @default(UPDATE)
+  comments  Comment[]
+  owner     User              @relation(fields: [ownerId], references: [uuid])
+  external  Boolean?          @default(false)
+  createdAt String
+  group     Group?            @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  groupId   String?
+}
+
+model Comment {
+  id             String        @id @default(uuid()) @map("_id")
+  anonymous      Boolean
+  text           String?
+  audio          String?
+  owner          User          @relation(fields: [ownerId], references: [uuid])
+  ownerId        String
+  conversation   Conversation? @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  conversationId String?
+  replies        Comment[]     @relation("Comments")
+  parent         Comment?      @relation("Comments", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  parentId       String?
+  reactions      Reaction[]
+  createdAt      String
+}
+
+model Reaction {
+  id        String  @id @default(uuid()) @map("_id")
+  text      String
+  user      String
+  createdAt String
+  comment   Comment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  commentId String
+}
+
+model Account {
+  id                   String              @id @default(uuid()) @map("_id")
+  name                 String
+  stripeCustomerId     String?
+  stripeSubscriptionId String?
+  plan                 PLAN                @default(FREE)
+  groups               Group[]
+  members              AccountMembership[]
+  invites              AccountInvite[]
+  createdAt            String
+}
+
+model AccountInvite {
+  id        String  @id @default(uuid()) @map("_id")
+  inviter   String
+  email     String
+  account   Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  accountId String
+  createdAt String
+}
+
+model AccountMembership {
+  id        String       @id @default(uuid()) @map("_id")
+  role      ACCOUNT_ROLE @default(ADMIN)
+  user      User         @relation(fields: [userId], references: [uuid], onDelete: Cascade)
+  userId    String
+  account   Account      @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  accountId String
+  createdAt String
+}
+
+model Group {
+  id                      String         @id @default(uuid()) @map("_id")
+  name                    String         @unique
+  account                 Account        @relation(fields: [accountId], references: [id])
+  accountId               String
+  owner                   User?          @relation(fields: [ownerId], references: [uuid]) // deprecated - moved to account
+  ownerId                 String? // deprecated - moved to account
+  type                    GROUP_TYPE     @default(PRIVATE)
+  quickCode               String?
+  startsAt                String?
+  expiresAt               String?
+  subheading              String?
+  description             String?
+  website                 String?
+  welcomeMessage          String?
+  primaryHost             String?
+  header                  String?
+  logo                    String?
+  hidden                  Boolean?       @default(false)
+  notifications           Json?
+  notificationPreferences Json?
+  inviteCodes             String[]
+  hostInviteCodes         String[]
+  discussions             Discussion[]
+  cards                   Card[]
+  polls                   Poll[]
+  goals                   Goal[]
+  members                 Membership[]
+  createdAt               String?
+  conversations           Conversation[]
+}
+
+model Membership {
+  id        String     @id @default(uuid()) @map("_id")
+  role      GROUP_ROLE @default(MEMBER)
+  user      User       @relation(fields: [userId], references: [uuid], onDelete: Cascade)
+  userId    String
+  group     Group      @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  groupId   String
+  createdAt String
+}
+
+model Goal {
+  id        String @id @default(uuid()) @map("_id")
+  userId    String
+  group     Group  @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  groupId   String
+  prompts   Json
+  createdAt String
+}
+
+model Card {
+  id      String  @id @default(uuid()) @map("_id")
+  group   Group   @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  groupId String
+  type    String
+  content String? // should be Json you idiot
+}
+
+model OfferCode {
+  id          String       @id @default(uuid()) @map("_id")
+  nonSecretId String       @unique
+  product     String
+  createdAt   String
+  createdBy   String
+  status      OFFER_STATUS
+}
