@@ -6,10 +6,10 @@ COPY package*.json ./
 # Install dependencies
 RUN npm ci 
 
-RUN npx prisma generate
-
 # Copy application code
 COPY . .
+
+RUN npx prisma generate
 
 # Set entry point
 ENTRYPOINT ["node", "index.js"]
